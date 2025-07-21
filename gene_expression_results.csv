@@ -1,0 +1,7 @@
+"Group","Sample","control_ct","SCS_ct","SCS_delta_ct","SCS_mean_delta_ct","SCS_delta_delta_ct","SCS_res"
+"Group1","S1",12,21,9,9,0,1
+"Group1","S2",12,21,9,9,0,1
+"Group1","S3",12,21,9,9,0,1
+"Group2","S1",12,22,10,9,1,0.5
+"Group2","S2",12,22,10,9,1,0.5
+"Group2","S3",12,22,10,9,1,0.5
