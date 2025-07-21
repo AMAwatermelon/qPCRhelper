@@ -19,7 +19,7 @@ qpcr_analysis_interactive <- function() {
   cat("注意：请确保输入的所有Ct值数量与相应组的样本数量一致！\n\n")
 
   # 获取分组数量
-  num_groups <- get_valid_integer("请输入分组数量: ")
+  num_groups <- get_valid_integer("请输入分组数量: ", min_val = 1)
 
   # 存储每组样本数
   samples_per_group <- integer(num_groups)
@@ -37,13 +37,16 @@ qpcr_analysis_interactive <- function() {
     cat("\n===== 正在处理分组", group_idx, "=====\n")
 
     # 获取当前分组的样本数量
-    samples_in_group <- get_valid_integer(paste0("请输入分组 ", group_idx, " 的样本数量: "))
+    samples_in_group <- get_valid_integer(paste0("请输入分组 ", group_idx, " 的样本数量: "), min_val = 1)
     samples_per_group[group_idx] <- samples_in_group
 
-    # 输入内参基因Ct值
-    prompt <- sprintf("请输入分组%d所有样本的内参基因Ct值 (需输入%d个数值，用空格分隔): ",
-                      group_idx, samples_in_group)
-    control_ct_values <- get_valid_numeric_vector(prompt, samples_in_group)
+    # 输入内参基因Ct值（带确认功能）
+    control_ct_values <- get_confirmed_values(
+      prompt = sprintf("请输入分组%d所有样本的内参基因Ct值 (需输入%d个数值，用空格分隔): ",
+                       group_idx, samples_in_group),
+      expected_length = samples_in_group,
+      value_name = "内参基因Ct值"
+    )
 
     # 创建当前分组的数据
     group_data <- data.frame(
@@ -58,7 +61,7 @@ qpcr_analysis_interactive <- function() {
   }
 
   # 获取基因数量
-  num_genes <- get_valid_integer("\n请输入基因数量: ")
+  num_genes <- get_valid_integer("\n请输入基因数量: ", min_val = 1)
 
   # 获取基因名称
   gene_names <- character(num_genes)
@@ -71,7 +74,7 @@ qpcr_analysis_interactive <- function() {
     sample_df[[paste0(gene, "_ct")]] <- NA
   }
 
-  # 收集基因Ct值
+  # 收集基因Ct值（带确认功能）
   cat("\n===== 输入基因Ct值 =====\n")
   cat("注意：每组每个基因需要输入与样本数量相同的Ct值！\n")
 
@@ -79,9 +82,13 @@ qpcr_analysis_interactive <- function() {
     samples_in_group <- samples_per_group[group_idx]
 
     for (gene in gene_names) {
-      prompt <- sprintf("\n请输入分组%d基因%s的Ct值 (需输入%d个数值，用空格分隔): ",
-                        group_idx, gene, samples_in_group)
-      gene_ct_values <- get_valid_numeric_vector(prompt, samples_in_group)
+      # 输入基因Ct值（带确认功能）
+      gene_ct_values <- get_confirmed_values(
+        prompt = sprintf("请输入分组%d基因%s的Ct值 (需输入%d个数值，用空格分隔): ",
+                         group_idx, gene, samples_in_group),
+        expected_length = samples_in_group,
+        value_name = paste0("基因", gene, "的Ct值")
+      )
 
       # 填充数据
       sample_df[sample_df$Group == paste0("Group", group_idx), paste0(gene, "_ct")] <- gene_ct_values

@@ -63,3 +63,33 @@ get_valid_gene_name <- function(prompt) {
     }
   }
 }
+
+#' 带确认功能的数值输入
+#'
+#' 该函数在获取数值输入后显示输入的值给用户确认，确保输入准确性
+#'
+#' @param prompt 提示信息
+#' @param expected_length 期望的数值长度
+#' @param value_name 数值名称（用于显示）
+#' @return 有效的数值向量
+#' @keywords internal
+get_confirmed_values <- function(prompt, expected_length, value_name) {
+  while(TRUE) {
+    # 使用现有的get_valid_numeric_vector函数获取数值向量
+    values <- get_valid_numeric_vector(prompt, expected_length)
+
+    # 显示输入的值
+    cat("\n您输入的", value_name, ":\n")
+    cat(values, sep = ", ")
+    cat("\n")
+
+    # 确认输入是否正确
+    response <- tolower(readline(prompt = "输入是否正确? (y/n): "))
+
+    if (response %in% c("y", "yes", "")) {
+      return(values)
+    } else {
+      cat("请重新输入", value_name, "\n")
+    }
+  }
+}
